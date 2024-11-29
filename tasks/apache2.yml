@@ -1,0 +1,7 @@
+---
+- name: edit apache2.conf
+  replace:
+    path: /etc/apache2/apache2.conf
+    regexp: \/opt\/1cv8\/x86_64\/\d.\d.\d\d.\d\d\d\d\/distr
+    replace: /opt/1cv8/x86_64/{{ c_version_dot }}/distr
+    backup: true

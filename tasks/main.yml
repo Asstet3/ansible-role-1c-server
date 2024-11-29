@@ -1,0 +1,47 @@
+---
+- name: Ensure packets is installed
+  apt:
+    update_cache: true
+    pkg: 
+      -  unzip  
+    state: present
+
+- name: "Ensure 1c {{ c_version }} is installed"
+  stat:
+    path: "/opt/1cv8/x86_64/{{ c_version| replace ('_', '.') }}"
+  register: check_1c_install
+
+    #- name:  "end play, folter is /opt/1cv8/x86_64/{{ c_version| replace ('_', '.') }} exist" 
+    #  block: 
+    #    - name: "end play, folter is /opt/1cv8/x86_64/{{ c_version| replace ('_', '.') }} exist"
+    #      debug:
+    #        msg: "notfing install, instalation exist"
+    #
+    #    - meta: end_play
+    #  when: check_1c_install.stat.exists
+    
+- name: create tmp dir for install
+  file:
+    path: "/tmp/{{ '1c_' + c_version }}"
+    state: directory
+  register: tmp_dir
+
+- name: copy archive with 1c to "/tmp/{{ '1c_' + c_version }}"
+  copy:
+    src: "files/{{ c_filename }}"
+    dest: "{{ tmp_dir.path }}" 
+
+- name: Ensure {{ tmp_dir.path }} have only zip archive
+  find:
+    path: "{{ tmp_dir.path }}"
+  register: tmp_dir_files
+
+
+- name: unzip acrhive winth 1c
+  command: unzip {{ tmp_dir.path + '/' + c_filename }} -d {{ tmp_dir.path }}
+  when: tmp_dir_files.matched == 1
+
+- name: install 1c
+  block:
+    - import_tasks: install.yml
+    - import_tasks: apache2.yml

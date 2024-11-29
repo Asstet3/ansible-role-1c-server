@@ -1,0 +1,37 @@
+---
+- name: install RUN
+  command: >
+    {{ tmp_dir.path }}/setup-full-{{ c_version_dot }}-x86_64.run 
+    --mode unattended  
+    --enable-components {{ c_components }}
+  when: not check_1c_install.stat.exists
+
+- name: change owner dir {{ check_1c_install }}
+  file:
+    path: "/opt/1cv8/x86_64/{{ c_version_dot }}"
+    recurse: true
+    owner: usr1cv8
+    group: grp1cv8
+
+- name: template 1c service
+  template:
+    src: templates/srv1cv8-8.service
+    dest: /etc/systemd/system/srv1cv8-{{ c_version_dot }}@{{ c_service_name }}.service
+
+- name: template 1c service
+  template:
+    src: templates/ras.service
+    dest: /etc/systemd/system/ras-{{ c_version_dot }}@{{ c_service_name }}.service
+
+- name: enable service srv1cv8
+  systemd_service:
+    name: srv1cv8-{{ c_version_dot }}@{{ c_service_name }}.service
+    state: started
+    daemon_reload: true
+    enabled: true
+
+- name: enable service ras
+  systemd_service:
+    name: ras-{{ c_version_dot }}@{{ c_service_name }}.service
+    state: started
+    enabled: true
