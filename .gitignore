@@ -2,3 +2,4 @@ Vagrantfile
 .vagrant/
 git@github.com:Asstet3/ansible-role-1c-server.git
 files/server64_with_clients_8_3_24_1761.zip
+*.swp

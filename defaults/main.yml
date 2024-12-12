@@ -3,5 +3,5 @@ c_version: "8_3_24_1761"
 c_version_dot: "{{ c_version| replace ('_', '.') }}"
 c_filename: "server64_with_clients_{{ c_version }}.zip"
 c_components: "server,ws"
-c_debug: true
+c_debug: false
 c_service_name: "first"
